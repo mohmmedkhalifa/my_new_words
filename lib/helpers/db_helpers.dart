@@ -1,6 +1,5 @@
 import 'dart:io';
 
-
 import 'package:my_words/models/sentences.dart';
 import 'package:my_words/models/words.dart';
 import 'package:path/path.dart';
@@ -20,7 +19,6 @@ class DBHelper {
   static final String sentenceId = 'sentenceId';
   static final String wordText = 'wordText';
   static final String sentenceText = 'sentenceText';
-
 
   /////////////
   Database database;
@@ -56,14 +54,12 @@ class DBHelper {
    )''');
   }
 
-
   createSentenceTable(Database db) {
     db.execute('''CREATE TABLE $sentenceTable(
     $sentenceId INTEGER PRIMARY KEY AUTOINCREMENT,
     $sentenceText TEXT NOT NULL
    )''');
   }
-
 
   insertNewBook(Word word) async {
     try {
@@ -77,6 +73,15 @@ class DBHelper {
     }
   }
 
+  deleteWord(Word word) async {
+    try {
+      int result = await database
+          .delete(wordTable, where: '$wordId=?', whereArgs: [word.id]);
+      print(result);
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
 
   insertNewSentence(Sentences value) async {
     try {

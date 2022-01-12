@@ -28,7 +28,25 @@ class _HomePageState extends State<HomePage> {
       initialIndex: 1,
       child: Scaffold(
         appBar: AppBar(
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: <Color>[
+                  Colors.deepPurple[700],
+                  Colors.deepPurple[600],
+                  Colors.deepPurple[500],
+                  Colors.purple[900],
+                  Colors.purple[800],
+                  Colors.purple[700],
+                  Colors.purple[600],
+                  Colors.purple[400],
+                ])),
+          ),
           bottom: TabBar(
+            indicatorColor: Colors.pink,
+            indicatorWeight: 3.5,
             tabs: [
               Tab(
                 child: Text(
@@ -113,15 +131,27 @@ class _HomePageState extends State<HomePage> {
                         itemBuilder: (context, index) => Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 4),
-                          child: Text(
-                            value.sentences[index].sentence ?? ' خطأ',
-                            maxLines: 2,
-                            overflow: TextOverflow.clip,
-                            style: TextStyle(
-                              fontSize: 30,
-                              fontFamily: 'Harm',
+                          child: ListTile(
+                            title: Text(
+                              value.sentences[index].sentence ?? ' خطأ',
+                              maxLines: 2,
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                fontSize: 30,
+                                fontFamily: 'Harm',
+                              ),
+                              textAlign: TextAlign.right,
                             ),
-                            textAlign: TextAlign.right,
+                            leading: IconButton(
+                                onPressed: () {
+                                  FlutterClipboard.copy(
+                                          value.sentences[index].sentence)
+                                      .then((value) =>
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                                  content: Text('تم النسخ'))));
+                                },
+                                icon: Icon(Icons.copy)),
                           ),
                         ),
                       ),
@@ -137,16 +167,37 @@ class _HomePageState extends State<HomePage> {
                     : ListView.separated(
                         separatorBuilder: (context, index) => Divider(),
                         itemCount: value.words.length,
-                        itemBuilder: (context, index) => Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 4),
-                          child: Text(
-                            value.words[index].word,
-                            style: TextStyle(
-                              fontSize: 30,
-                              fontFamily: 'Harm',
+                        itemBuilder: (context, index) => Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: Dismissible(
+                            key: UniqueKey(),
+                            onDismissed: (direction) {
+                              value.deleteWord(words[index]);
+                            },
+                            background: Container(
+                              color: Colors.red,
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Icon(
+                                  Icons.delete,
+                                  color: Colors.black,
+                                  size: 45,
+                                ),
+                              ),
                             ),
-                            textAlign: TextAlign.right,
+                            direction: DismissDirection.horizontal,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 4),
+                              child: Text(
+                                value.words[index].word,
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  fontFamily: 'Harm',
+                                ),
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
                           ),
                         ),
                       ),

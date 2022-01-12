@@ -10,6 +10,11 @@ class WordProvider extends ChangeNotifier {
     getAllBook();
   }
 
+  deleteWord(Word word)async{
+    await DBHelper.dbHelper.deleteWord(word);
+    getAllBook();
+  }
+
   getAllBook() async {
     List<Map<String, dynamic>> rows = await DBHelper.dbHelper.getAllWords();
     List<Word> books =
